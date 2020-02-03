@@ -15,9 +15,9 @@ brick.buttonDown.onEvent(ButtonEvent.Pressed, function () {
 brick.buttonUp.onEvent(ButtonEvent.Pressed, function () {
     motors.largeBC.setInverted(true)
     pospesevanje(30)
-    vozi_ravno(40)
-    do_crte(0, 30, 2)
-    motors.largeBC.tank(30, 30, 0.3, MoveUnit.Rotations)
+    vozi_ravno(20)
+    do_crte(80, 30, 2)
+    //motors.largeBC.tank(30, 30, 0.3, MoveUnit.Rotations)
     motors.stopAll()
 })
 
@@ -52,52 +52,49 @@ brick.buttonEnter.onEvent(ButtonEvent.Pressed, function () {
     motors.largeBC.tank(30, 30, 1, MoveUnit.Rotations)
 })
 
+sensors.color1.calibrateLight(LightIntensityMode.Reflected)
 
 // KALIBRIRA GYRO
 brick.buttonRight.onEvent(ButtonEvent.Pressed, function () {
     sensors.gyro3.calibrate()
 })
 
-
 /*
 OD TU NAPREJ PODPROGRAMI 
 */
-
 /*
 PODPROGRAM ZA VOŽNJO NARAVNOST
 */
 function vozi_ravno(cm: number) {
+    popravek = 0
     sensors.gyro3.reset()
     motors.resetAll()
+    motors.largeBC.setBrake(false)
     while (Math.abs(motors.largeB.angle()) < 360 * (cm / 29)) {
         popravek = sensors.gyro3.angle() * 1.3
-        motors.largeBC.steer(popravek, 25)
+        motors.largeBC.steer(popravek, 30)
         brick.showString("Popravek", 7)
         brick.showNumber(popravek, 8)
     }
-    motors.stopAll()
-    motors.largeBC.setBrake(true)
 }
-
-
 /*
 PODPROGRAM ZA POSPEŠEVANJE
 */
 function pospesevanje(maxmoc: number) {
+    moc = 0
+    motors.largeBC.setBrake(false)
     while (moc < maxmoc) {
-        motors.largeBC.setBrake(false)
         motors.largeBC.tank(moc, moc)
         moc = moc + 2
-        control.waitMicros(30000)
+        control.waitMicros(100000)
     }
 }
-
-
 /*
 PODPROGRAM ZA VOŽNJO DO ČRTE
 */
 function do_crte(svetlost: number, moc: number, senzor: number) {
     motors.largeBC.setInverted(true)
+    motors.largeBC.setBrake(true)
     // če rabimo senzor ena
     if (senzor = 1) {
         while (sensors.color1.light(LightIntensityMode.Reflected) < svetlost) {
@@ -115,7 +112,7 @@ function do_crte(svetlost: number, moc: number, senzor: number) {
 }
 /*
 PODPROGRAM ZA IZPIS POMEMBNIH VREDNOSTI SENZORJEV
-*/
+
 forever(function () {
     brick.showString("Color 1", 1)
     brick.showNumber(sensors.color1.light(LightIntensityMode.Reflected), 2)
@@ -124,7 +121,7 @@ forever(function () {
     brick.showString("Gyro 3", 5)
     brick.showNumber(sensors.gyro3.angle(), 6)
 })
-
+*/
 
 /*
 SPREMENLJIVKE
@@ -135,5 +132,6 @@ let moc3 = 0
 let senzor = 0
 let i = 0
 let svetlost = 0
+let maxmoc = 0
 
 //Čudovito!!
