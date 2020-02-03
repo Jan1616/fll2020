@@ -15,8 +15,8 @@ brick.buttonDown.onEvent(ButtonEvent.Pressed, function () {
 brick.buttonUp.onEvent(ButtonEvent.Pressed, function () {
     motors.largeBC.setInverted(true)
     pospesevanje(30)
-    vozi_ravno(20)
-    do_crte(80, 30, 2)
+    vozi_ravno(0.6)
+    do_crte(90, 30, 2)
     //motors.largeBC.tank(30, 30, 0.3, MoveUnit.Rotations)
     motors.stopAll()
 })
@@ -68,13 +68,15 @@ PODPROGRAM ZA VOŽNJO NARAVNOST
 function vozi_ravno(cm: number) {
     popravek = 0
     sensors.gyro3.reset()
-    motors.resetAll()
+    motors.largeB.reset()
     motors.largeBC.setBrake(false)
     while (Math.abs(motors.largeB.angle()) < 360 * (cm / 29)) {
-        popravek = sensors.gyro3.angle() * 1.3
+        popravek = sensors.gyro3.angle() * 1
         motors.largeBC.steer(popravek, 30)
         brick.showString("Popravek", 7)
         brick.showNumber(popravek, 8)
+        brick.showString("360*cm/29", 9)
+        brick.showNumber(motors.largeB.angle(), 10)
     }
 }
 /*
